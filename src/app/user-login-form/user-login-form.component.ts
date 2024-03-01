@@ -27,10 +27,6 @@ export class UserLoginFormComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  /**
-   * Function responsible for sending the form inputs to the backend.
-   * @returns Message "User login successful" / "User login failed"
-   */
   loginUser(): void {
     this.fetchApiData.userLogin(this.userData).subscribe(
       (result) => {
