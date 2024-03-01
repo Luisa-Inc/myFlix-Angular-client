@@ -19,8 +19,8 @@ import { FormsModule } from '@angular/forms';
 
 // Component
 import { UserRegistrationFormComponent } from './user-registration-form/user-registration-form.component';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { UserLoginFormComponent } from './user-login-form/user-login-form.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 
