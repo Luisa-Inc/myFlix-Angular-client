@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+
+// Components
 import { DirectorInfoComponent } from '../director-info/director-info.component';
-import { GenreInfoComponent } from '../genre-info/genre-info.component';
 import { MovieSynopsisComponent } from '../movie-synopsis/movie-synopsis.component';
+import { GenreInfoComponent } from '../genre-info/genre-info.component';
 
 // Import to bring in the API call created in 6.2
 import { FetchApiDataService } from '../fetch-api-data.service';
@@ -11,26 +14,77 @@ import { FetchApiDataService } from '../fetch-api-data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-movie-card',
-  templateUrl: './movie-card.component.html',
-  styleUrls: ['./movie-card.component.scss'],
+  selector: 'app-user-profile',
+  templateUrl: './user-profile.component.html',
+  styleUrls: ['./user-profile.component.scss'],
 })
-export class MovieCardComponent implements OnInit {
-  movies: any[] = [];
+export class UserProfileComponent implements OnInit {
+  @Input() userData = {
+    Username: '',
+    Email: '',
+    Birthday: '',
+    FavoriteMovies: [],
+  };
+
   user: any = {};
-  userData = { Username: '', FavoriteMovies: [] };
+  movies: any[] = [];
   FavoriteMovies: any[] = [];
-  isFavMovie: boolean = false;
 
   constructor(
     public fetchApiData: FetchApiDataService,
-    public dialog: MatDialog,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    private router: Router,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.getMovies();
+    this.getProfile();
     this.getFavMovies();
+  }
+
+  //Function for getting user.
+  getProfile(): void {
+    this.user = this.fetchApiData.getUser();
+    this.userData.Username = this.user.Username;
+    this.userData.Email = this.user.Email;
+    this.userData.Birthday = this.user.Birthday;
+    this.fetchApiData.getAllMovies().subscribe((response) => {
+      this.FavoriteMovies = response.filter((movie: any) =>
+        this.user.FavoriteMovies.includes(movie._id)
+      );
+    });
+  }
+
+  //Function for updating user information.
+  updateUser(): void {
+    this.fetchApiData.editUser(this.userData).subscribe(
+      (result) => {
+        console.log('User update success:', result);
+        localStorage.setItem('user', JSON.stringify(result));
+        this.snackBar.open('User update successful', 'OK', {
+          duration: 2000,
+        });
+      },
+      (error) => {
+        console.error('Error updating user:', error);
+        this.snackBar.open('Failed to update user', 'OK', {
+          duration: 2000,
+        });
+      }
+    );
+  }
+
+  //Function to delete user profile.
+  deleteUser(): void {
+    this.router.navigate(['welcome']).then(() => {
+      localStorage.clear();
+      this.snackBar.open('User successfully deleted.', 'OK', {
+        duration: 2000,
+      });
+    });
+    this.fetchApiData.deleteUser().subscribe((result) => {
+      console.log(result);
+    });
   }
 
   //Function for getting all movies.
@@ -42,7 +96,7 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
-  // Function that will open the dialog when director button is clicked.
+  //Function that will open the dialog when director button is clicked.
   openDirectorDialog(
     name: string,
     bio: string,
@@ -99,25 +153,6 @@ export class MovieCardComponent implements OnInit {
     }
   }
 
-  //Function add / delete favMovie by icon button
-  toggleFav(movie: any): void {
-    const isFavorite = this.isFav(movie);
-    isFavorite ? this.deleteFavMovies(movie) : this.addFavMovies(movie);
-  }
-
-  //Function to add movie to favMovie list
-  addFavMovies(movie: any): void {
-    this.user = this.fetchApiData.getUser();
-    this.userData.Username = this.user.Username;
-    this.fetchApiData.addFavouriteMovies(movie).subscribe((result) => {
-      localStorage.setItem('user', JSON.stringify(result));
-      this.getFavMovies();
-      this.snackBar.open('Movie has been added to your favorites!', 'OK', {
-        duration: 3000,
-      });
-    });
-  }
-
   //Function to delete movie from favMovie list.
   deleteFavMovies(movie: any): void {
     this.user = this.fetchApiData.getUser();
@@ -125,6 +160,7 @@ export class MovieCardComponent implements OnInit {
     this.fetchApiData.deleteFavouriteMovies(movie).subscribe((result) => {
       localStorage.setItem('user', JSON.stringify(result));
       this.getFavMovies();
+      this.getProfile();
       this.snackBar.open('Movie has been deleted from your favorites!', 'OK', {
         duration: 3000,
       });
