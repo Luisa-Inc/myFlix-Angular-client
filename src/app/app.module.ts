@@ -37,20 +37,33 @@ const appRoutes: Routes = [
   { path: '', redirectTo: 'welcome', pathMatch: 'prefix' },
 ];
 
+/**
+ * Root module for the application.
+ * @module AppModule
+ */
 @NgModule({
   declarations: [
+    /** @component AppComponent */
     AppComponent,
+    /** @component UserRegistrationFormComponent */
     UserRegistrationFormComponent,
+    /** @component UserLoginFormComponent */
     UserLoginFormComponent,
+    /** @component MovieCardComponent */
     MovieCardComponent,
+    /** @component WelcomePageComponent */
     WelcomePageComponent,
-    UserProfileComponent,
-    DirectorInfoComponent,
-    GenreInfoComponent,
-    MovieSynopsisComponent,
+    /** @component NavbarComponent */
     NavbarComponent,
+    /** @component UserProfileComponent */
+    UserProfileComponent,
+    /** @component DirectorInfoComponent */
+    DirectorInfoComponent,
+    /** @component GenreInfoComponent */
+    GenreInfoComponent,
+    /** @component MovieSynopsisComponent */
+    MovieSynopsisComponent,
   ],
-
   imports: [
     BrowserModule,
     AppRoutingModule,
