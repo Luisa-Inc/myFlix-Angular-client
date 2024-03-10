@@ -30,8 +30,8 @@ The client-side for an app called myMovie based on its existing server-side code
 - Returns all movie from the API to the user
 - Ability to see director details, genre details and synopsis of each movie
 - in Navbar:
- - Ability to log out
- - Ability to navigate to Profile View
+    - Ability to log out
+    - Ability to navigate to Profile View
 
 ### Profile View
 
@@ -39,8 +39,8 @@ The client-side for an app called myMovie based on its existing server-side code
 - Allows users to update their info (username, email, date of birth)
 - Allows existing users to deregister
 - Displays favorite movies
- - Allows users to remove a movie from their list of favorites
- 
+    - Allows users to remove a movie from their list of favorites
+
 
 # Set up
 
